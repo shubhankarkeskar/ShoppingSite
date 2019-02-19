@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:annotation-driven/>
+    <mvc:resources mapping="/resources/**" location="/resources/js/"/>
+    <mvc:resources mapping="/resources/**" location="/resources/css/"/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.ols.controllers"/>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <bean class="com.ols.interceptor.RequestInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="registerService" class="com.ols.service.classes.RegisterServiceImpl"/>
+    <bean id="userDAO" class="com.ols.dao.classes.RegistrationDAOImpl"/>
+    <bean id="loginService" class="com.ols.service.classes.LoginServiceImpl"/>
+    <bean id="loginDAO" class="com.ols.dao.classes.LoginDAOImpl"/>
+    <bean id="homeService" class="com.ols.service.classes.HomeServiceImpl"/>
+    <bean id="siteDAO" class="com.ols.dao.classes.ShoppingSiteDAOImpl"/>
+    <bean id="cartService" class="com.ols.service.classes.CartServiceImpl"/>
+    <bean id="cartDAO" class="com.ols.dao.classes.CartDAOImpl"/>
+    <bean id="checkoutService" class="com.ols.service.classes.CheckoutServiceImpl"/>
+    <bean id="checkoutDAO" class="com.ols.dao.classes.CheckoutDAOImpl"/>
+    <bean id="encode" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+</beans>
