@@ -37,11 +37,4 @@
     <bean id="checkoutDAO" class="com.ols.dao.classes.CheckoutDAOImpl"/>
     <bean id="encode" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
-    <!--<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="com.ols.exception.GlobalExceptionHandler"/>
-            </props>
-        </property>
-    </bean>-->
 </beans>
