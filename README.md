@@ -13,3 +13,17 @@ HikariCP - 2.7.8
 
 These are the basic requirements(dependencies) which are present except MySQL. It may be a different version on your system.
 Project Created using maven.
+
+Instructions
+1. Import the project in our IDE
+2. Create a database 'ShoppingSite'
+3. Change the db user & password according to your config.
+4. Run the sql scripts provided in SQL Folder
+5. Run/Debug Configurations(if needed) - 
+    URL - http://localhost:8080/ShoppingSite
+    JRE - 1.8
+    Tomcat - 9.0.14 (or you can specify your existing tomcat version suitable for the project)
+    Create war if not present(war exploded) In ApplicationContext: /ShoppingSite
+    Apply Changes
+5. Build & run the project
+6. For logs you can specify a different file path in log4j.properties
