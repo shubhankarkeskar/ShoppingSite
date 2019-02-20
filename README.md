@@ -10,6 +10,9 @@ mysql-connector - 8.0.14
 jstl lib - 1.2
 Spring security - 5.0.6
 HikariCP - 2.7.8
+slf4j-api - 1.7.25
+log4j - 1.2.17
+slf4j-simple - 1.6.4
 
 These are the basic requirements(dependencies) which are present except MySQL. It may be a different version on your system.
 Project Created using maven.
