@@ -23,7 +23,7 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Parameters - none
     * Functionality - Gets a list of all products with its category*/
     @Override
-    public List<Product> getProducts() throws SQLException,NullPointerException{
+    public List<Product> getProducts() throws Exception{
 
         //Creating a list of products
         List<Product> productList=new ArrayList<>();
@@ -54,21 +54,26 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
             HikariCPDataSource.closeConnection();
         return productList;
     }
+    private ResultSet prepareProductQuery(String query,String condition) throws SQLException {
+        PreparedStatement preparedStatement=HikariCPDataSource.getConnection().prepareStatement(query);
+        preparedStatement.setString(1,condition);
+
+        ResultSet resultSet=preparedStatement.executeQuery();
+        return resultSet;
+    }
     /*Method - getSelectedProducts
     * Return type - List of Product Order
     * Parameters - productId & quantity
     * Functionality - Gets list of selected products which needs to be added to the cart*/
     @Override
-    public List<ProductOrder> getSelectedProducts(String productId, String quantity) throws SQLException,NullPointerException {
+    public List<ProductOrder> getSelectedProducts(String productId, String quantity) throws Exception{
 
         //Creating products list but here we will only add required fields
         List<ProductOrder> productList=new ArrayList<>();
 
             String query="select PRODUCT_ID,PRODUCT_NAME,PRICE,STOCK from PRODUCT where PRODUCT_ID=?";
-            preparedStatement=HikariCPDataSource.getConnection().prepareStatement(query);
-            preparedStatement.setString(1,productId);
 
-            ResultSet resultSet=preparedStatement.executeQuery();
+            ResultSet resultSet=prepareProductQuery(query,productId);
             while (resultSet.next()){
                 ProductOrder productOrder=new ProductOrder();
                 Product product=new Product();
@@ -92,16 +97,13 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Parameters - ProductId
     * Functionality - Gets a list of selected products for confirmation*/
     @Override
-    public List<Product> getProductsForConfirmation(String productId) {
+    public List<Product> getProductsForConfirmation(String productId) throws Exception{
 
         //Creating products list but here we will only add required fields
         List<Product> productList=new ArrayList<>();
-        try {
             String query="select PRODUCT_ID,PRODUCT_NAME,PRICE,STOCK from PRODUCT where PRODUCT_ID=?";
-            preparedStatement=HikariCPDataSource.getConnection().prepareStatement(query);
-            preparedStatement.setString(1,productId);
 
-            ResultSet resultSet=preparedStatement.executeQuery();
+            ResultSet resultSet=prepareProductQuery(query,productId);
             while (resultSet.next()){
                 Product product=new Product();
 
@@ -115,9 +117,6 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
             resultSet.close();
             preparedStatement.close();
             HikariCPDataSource.closeConnection();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return productList;
     }
     /*Method - checkStock
@@ -136,9 +135,8 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Return type - Generic
     * Parameters - query & generic condition
     * Functionality - Generic method which executes a query & returns a generic type based on the condition*/
-    private <T> int executeMyQuery(String query,T condition){
+    private <T> int executeMyQuery(String query,T condition) throws Exception {
         int return_value=0;
-        try {
             preparedStatement = HikariCPDataSource.getConnection().prepareStatement(query);
             preparedStatement.setString(1,condition.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -148,17 +146,14 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
             resultSet.close();
             preparedStatement.close();
             HikariCPDataSource.closeConnection();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return return_value;
     }
     /*Method - checkAvailability
     * Return type - boolean
     * Parameters - productId & quantity
     * Functionality - Sets the query & gives call for execution of query & checking the stock */
-    private boolean checkAvailability(String productId,String quantity){
-        int stock=0;
+    private boolean checkAvailability(String productId,String quantity)throws Exception{
+        int stock;
         String query="select STOCK from PRODUCT where PRODUCT_ID=?";
         stock=executeMyQuery(query,productId);
         return checkStock(stock,quantity);
@@ -168,7 +163,7 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Parameters - User Name
     * Functionality - Sets the required query & gives call execution of query*/
     @Override
-    public int getCustomerId(String userName){
+    public int getCustomerId(String userName) throws Exception {
         String query="select CUSTOMER_ID from CUSTOMER where USER_NAME=?";
         return executeMyQuery(query,userName);
     }
@@ -177,46 +172,38 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Parameters - PreparedStatement object
     * Functionality - Executes the required query*/
     @Override
-    public int getResultFromQuery(PreparedStatement preparedStatement){
+    public int getResultFromQuery(PreparedStatement preparedStatement) throws Exception{
         int result=0;
-        try {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 result = resultSet.getInt(1);
             }
             resultSet.close();
             preparedStatement.close();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return result;
     }
     /*Method - getOrderId
     * Return type - integer
     * Parameters - customerId & order time
     * Functionality - Gets orderId of a particular customer having the respective order time*/
-    private int getOrderId(int customerId,String orderTime){
-        int temp_orderId=0;
+    private int getOrderId(int customerId,String orderTime) throws Exception{
+        int temp_orderId;
         String query="select CO.ORDER_ID from CUSTOMER_ORDER CO,CUSTOMER C where CO.CUSTOMER_ID=C.CUSTOMER_ID AND CO.CUSTOMER_ID=? AND CO.ORDER_TIME=?";
-        try {
+
             preparedStatement=HikariCPDataSource.getConnection().prepareStatement(query);
             preparedStatement.setInt(1,customerId);
             preparedStatement.setString(2,orderTime);
 
             temp_orderId=getResultFromQuery(preparedStatement);
             HikariCPDataSource.closeConnection();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return temp_orderId;
     }
     /*Method - addToProductOrder
     * Return type - integer
     * Parameters - orderID,productId & quantity
     * Functionality - Inserts the Product Order details into the table*/
-    private int addToProductOrder(int orderId,String productID,String quantity){
-        int updated=0;
-        try {
+    private int addToProductOrder(int orderId,String productID,String quantity) throws Exception{
+        int updated;
             String query = "insert into PRODUCT_ORDER values (?,?,?)";
             preparedStatement = HikariCPDataSource.getConnection().prepareStatement(query);
             preparedStatement.setInt(1, orderId);
@@ -226,9 +213,6 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
             updated=preparedStatement.executeUpdate();
             preparedStatement.close();
             HikariCPDataSource.closeConnection();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return updated;
     }
     /*Method - checkUpdated
@@ -248,10 +232,9 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Return type - integer
     * Parameters - order time & customerId
     * Functionality - Inserts the customer order details into the table*/
-    private int addToOrder(String order_time,int customerId){
+    private int addToOrder(String order_time,int customerId) throws Exception{
 
-        int updated_Customer_Order=0;
-        try {
+        int updated_Customer_Order;
             String query="insert into CUSTOMER_ORDER values(?,?,?,?)";
             preparedStatement=HikariCPDataSource.getConnection().prepareStatement(query);
             preparedStatement.setString(1,null);
@@ -262,21 +245,17 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
             updated_Customer_Order=preparedStatement.executeUpdate();
             preparedStatement.close();
             HikariCPDataSource.closeConnection();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return updated_Customer_Order;
     }
     /*Method - updateStock
     * Return type - integer
     * Parameters - productID & quantity
     * Functionality - Updates the stock of a particular productId*/
-    private int updateStock(String productId,String quantity){
+    private int updateStock(String productId,String quantity) throws Exception {
         //First getting the stock of that product
         String query="select STOCK from PRODUCT where PRODUCT_ID=?";
         int stock=executeMyQuery(query,productId);
-        int updated=0;
-        try {
+        int updated;
             String update_query="update PRODUCT set STOCK=? where PRODUCT_ID=?";
             preparedStatement=HikariCPDataSource.getConnection().prepareStatement(update_query);
             preparedStatement.setInt(1,(stock-Integer.parseInt(quantity)));
@@ -285,9 +264,6 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
             updated=preparedStatement.executeUpdate();
             preparedStatement.close();
             HikariCPDataSource.closeConnection();
-        }catch (SQLException s){
-            s.printStackTrace();
-        }
         return updated;
     }
     private int updated_addition=0;
@@ -304,12 +280,12 @@ public class ShoppingSiteDAOImpl implements ShoppingSiteDAO {
     * Parameters - productId,quantity,user name,insert count & order time
     * Functionality - Gives call to required methods of insertion & updation for confirmation of complete order*/
     @Override
-    public int confirmOrder(String productId, String quantity, String userName,int insertCount,String order_time) {
+    public int confirmOrder(String productId, String quantity, String userName,int insertCount,String order_time) throws Exception {
         //Call to check availability of product
         boolean availability=checkAvailability(productId,quantity);
         int updated,stock_updated,customerId;
         //If available then do the processing
-        if (availability==true){
+        if (availability){
             //Getting customerId
             customerId = getCustomerId(userName);
             //Inserting to customer order only once

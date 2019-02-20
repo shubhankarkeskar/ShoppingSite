@@ -5,8 +5,6 @@ import com.ols.model.Product;
 import com.ols.service.interfaces.HomeService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.sql.SQLException;
 import java.util.List;
 /*Class - HomeServiceImpl
 * Implements - HomeService
@@ -21,7 +19,7 @@ public class HomeServiceImpl implements HomeService {
     * Parameters - None
     * Functionality - Gives call to getProducts method of siteDAO & gets a list of Products*/
     @Override
-    public List<Product> getProductList() throws SQLException,NullPointerException {
+    public List<Product> getProductList() throws Exception {
         logger.info("INSIDE HOME SERVICE : getProductList");
         return siteDAO.getProducts();
     }
@@ -30,7 +28,7 @@ public class HomeServiceImpl implements HomeService {
     * Parameters - ProductId
     * Functionality - Gives a call to the getProductsForConfirmation method of siteDAO & gets a list of products*/
     @Override
-    public List<Product> getSelectedProducts(String productId) throws SQLException,NullPointerException {
+    public List<Product> getSelectedProducts(String productId) throws Exception {
         logger.info("INSIDE HOME SERVICE : getSelectedProducts");
         return siteDAO.getProductsForConfirmation(productId);
     }

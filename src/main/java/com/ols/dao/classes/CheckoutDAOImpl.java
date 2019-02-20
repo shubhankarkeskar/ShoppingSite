@@ -26,7 +26,7 @@ public class CheckoutDAOImpl implements CheckoutDAO {
     * Return type - integer
     * Parameters - customerID
     * Functionality - Gets the latest orderID of that customer who has placed the order*/
-    private int getOrderId(int customerID){
+    private int getOrderId(int customerID) throws Exception{
         int orderID=0;
         try {
             String query="select CO.ORDER_ID from CUSTOMER_ORDER CO,CUSTOMER C where CO.CUSTOMER_ID=C.CUSTOMER_ID AND CO.CUSTOMER_ID=? order by CO.ORDER_TIME desc limit 1";
@@ -105,7 +105,7 @@ public class CheckoutDAOImpl implements CheckoutDAO {
     * Parameters - User Name
     * Functionality - Gives call to all the required methods which will in turn return a list*/
     @Override
-    public List<ProductOrder> getOrderDetails(String userName) {
+    public List<ProductOrder> getOrderDetails(String userName) throws Exception {
 
         //Gets customerID by calling getCustomerID method of siteDAO & userName as parameter
         int customerID=siteDAO.getCustomerId(userName);

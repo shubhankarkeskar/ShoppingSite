@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ShoppingSiteDAO {
-    List<Product> getProducts() throws SQLException,NullPointerException;
-    List<Product> getProductsForConfirmation(String productId);
-    List<ProductOrder> getSelectedProducts(String productId, String quantity) throws SQLException,NullPointerException;
-    int confirmOrder(String productId, String quantity, String userName,int insertCount,String order_time);
-    int getCustomerId(String userName);
-    int getResultFromQuery(PreparedStatement preparedStatement);
+    List<Product> getProducts() throws Exception;
+    List<Product> getProductsForConfirmation(String productId)throws Exception;
+    List<ProductOrder> getSelectedProducts(String productId, String quantity) throws Exception;
+    int confirmOrder(String productId, String quantity, String userName,int insertCount,String order_time) throws Exception;
+    int getCustomerId(String userName) throws Exception;
+    int getResultFromQuery(PreparedStatement preparedStatement)throws Exception;
 }

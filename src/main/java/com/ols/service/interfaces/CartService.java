@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CartService {
     boolean isAvailable(String productID[],String quantity[]) throws NumberFormatException,NullPointerException, SQLException;
-    List<ProductOrder> getCart(String productId, String quantity) throws SQLException,NullPointerException;
+    List<ProductOrder> getCart(String productId, String quantity) throws Exception;
     String[] removeItem(String[] cart,int index);
-    String[] addItem(String[] cart,int newLength,String item);
+    String[] addItem(String[] cart,int newLength,String item) throws NullPointerException;
 }

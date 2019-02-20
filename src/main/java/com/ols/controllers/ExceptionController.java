@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -16,17 +15,29 @@ import java.sql.SQLException;
 public class ExceptionController {
     @ExceptionHandler(UserNameDuplicateException.class)
     public ModelAndView duplicateError(){
-        ModelAndView modelAndView=new ModelAndView("redirect:/register_error");
-        return modelAndView;
+        return new ModelAndView("redirect:/register_error");
     }
     @ExceptionHandler(SQLException.class)
-    public ResponseEntity<String> sqlError(){
-        return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
+    public ModelAndView sqlError(){
+        ModelAndView modelAndView=new ModelAndView("500");
+        modelAndView.addObject("exception_message","Database Error");
+        return modelAndView;
+        //return new ResponseEntity<>("Database Error\nPlease Contact Support",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> nullPointerError(){
-        return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
+    public ModelAndView nullPointerError(){
+        ModelAndView modelAndView=new ModelAndView("500");
+        modelAndView.addObject("exception_message","Internal Server Error");
+        return modelAndView;
+        //return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ModelAndView numberFormatError(){
+        ModelAndView modelAndView=new ModelAndView("406");
+        modelAndView.addObject("exception_message","Number Format Not Accepted");
+        return modelAndView;
+        //return new ResponseEntity<>("Number Format Not Accepted",HttpStatus.NOT_ACCEPTABLE);
     }
 }

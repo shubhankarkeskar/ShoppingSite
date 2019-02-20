@@ -81,7 +81,7 @@ public class CartDAOImpl implements CartDAO {
     * Parameters - productId & quantity
     * Functionality - Gives call to getSelectedProducts method of siteDAO with same parameters*/
     @Override
-    public List<ProductOrder> getCart(String productID, String quantity) throws SQLException,NullPointerException{
+    public List<ProductOrder> getCart(String productID, String quantity) throws Exception{
         return siteDAO.getSelectedProducts(productID,quantity);
     }
 }

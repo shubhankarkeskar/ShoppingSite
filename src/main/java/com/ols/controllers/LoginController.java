@@ -42,7 +42,7 @@ public class LoginController {
     @RequestMapping(value = "sign_in",method = RequestMethod.POST)
     public ModelAndView signIn(@ModelAttribute Login login, HttpSession session) throws SQLException{
         logger.info("INTO SIGN IN");
-        boolean valid=true;
+        boolean valid;
         try {
             valid=loginService.validate(login);
         }catch (Exception e){
@@ -93,7 +93,6 @@ public class LoginController {
         session.removeAttribute("userName");
         session.invalidate();
         logger.info("SESSION INVALIDATED");
-        ModelAndView model = new ModelAndView("redirect:/");
-        return model;
+        return new ModelAndView("redirect:/");
     }
 }

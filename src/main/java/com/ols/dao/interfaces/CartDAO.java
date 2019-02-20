@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CartDAO {
     boolean isAvailable(String[] productID, String[] quantity) throws NumberFormatException,SQLException,NullPointerException;
-    List<ProductOrder> getCart(String productID, String quantity) throws SQLException,NullPointerException;
+    List<ProductOrder> getCart(String productID, String quantity) throws Exception;
 }

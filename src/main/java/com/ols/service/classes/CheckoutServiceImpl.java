@@ -7,6 +7,7 @@ import com.ols.service.interfaces.CheckoutService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +42,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     * Parameters - ProductID, Quantity, User Name & insert count
     * Functionality - Gives call to the confirmOrder of siteDAO using same parameters & gets an integer value*/
     @Override
-    public int confirmOrder(String productId, String quantity, String userName,int insertCount) {
+    public int confirmOrder(String productId, String quantity, String userName,int insertCount) throws Exception {
         logger.info("INSIDE CHECKOUT SERVICE : confirmOrder");
         //Setting order_time only once
         if (insertCount<=1){
@@ -55,7 +56,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     * Parameters - Array of confirmation
     * Functionality - Checks if all the products in an order are confirmed or not*/
     @Override
-    public boolean checkConfirmation(int[] confirm) {
+    public boolean checkConfirmation(int[] confirm) throws NullPointerException{
         logger.info("INSIDE CHECKOUT SERVICE : checkConfirmation");
         //Initial condition setting confirm flag as true
         boolean confirmFlag=true;
@@ -74,7 +75,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     * Parameters - User Name
     * Functionality - Gives a call to getOrderDetails of checkoutDAO with same parameters & gets a list of ProductOrder*/
     @Override
-    public List<ProductOrder> getOrderDetails(String userName) {
+    public List<ProductOrder> getOrderDetails(String userName) throws Exception{
         logger.info("INSIDE CHECKOUT SERVICE : getOrderDetails");
         return checkoutDAO.getOrderDetails(userName);
     }

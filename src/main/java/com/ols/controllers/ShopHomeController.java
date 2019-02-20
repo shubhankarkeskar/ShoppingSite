@@ -42,7 +42,7 @@ public class ShopHomeController {
     /*Method - confirmation
     * This method will render the view of confirmation after the user has selected the products*/
     @RequestMapping(value = "confirm",method = RequestMethod.POST)
-    public ModelAndView confirmation(HttpServletRequest request) throws SQLException,NullPointerException {
+    public ModelAndView confirmation(HttpServletRequest request) throws Exception {
         logger.info("INSIDE CONFIRMATION");
         //Getting selected products from the view
         String[] productID = request.getParameterValues("select");
@@ -58,11 +58,7 @@ public class ShopHomeController {
             List<Product> productList;
             //Getting details of each product selected
             for (int i=0;i<productID.length;i++) {
-                try {
-                    productList = homeService.getSelectedProducts(productID[i]);
-                }catch (Exception e){
-                    throw e;
-                }
+                productList = homeService.getSelectedProducts(productID[i]);
                 //Adding those details in the list
                 list.add(productList);
             }
@@ -84,11 +80,7 @@ public class ShopHomeController {
         String[] productID = request.getParameterValues("productID");
         boolean isAvailable;
         //Checking if product is available or not
-        try {
-            isAvailable = cartService.isAvailable(productID, quantity);
-        }catch (Exception e){
-            throw e;
-        }
+        isAvailable = cartService.isAvailable(productID, quantity);
         ModelAndView modelAndView=new ModelAndView();
         //If available then check session attributes
         if (isAvailable){
@@ -104,8 +96,8 @@ public class ShopHomeController {
                 String[] cartProducts = (String[]) session.getAttribute("shopping_cart_productId");
                 String[] cartQuantity = (String[]) session.getAttribute("shopping_cart_quantity");
                 for (int i=0;i<productID.length;i++){
-                    cartProducts=cartService.addItem(cartProducts,cartProducts.length,productID[i]);
-                    cartQuantity=cartService.addItem(cartQuantity,cartQuantity.length,quantity[i]);
+                    cartProducts = cartService.addItem(cartProducts, cartProducts.length, productID[i]);
+                    cartQuantity = cartService.addItem(cartQuantity, cartQuantity.length, quantity[i]);
                 }
                 //After adding new elements set the session attribute
                 session.setAttribute("shopping_cart_productId", cartProducts);
@@ -140,9 +132,10 @@ public class ShopHomeController {
     /*Method - defaultView
     * This method gets the list of products & renders it to Product List view*/
     @RequestMapping(value = "/productsList",method = RequestMethod.GET)
-    public ModelAndView defaultView() throws SQLException,NullPointerException{
+    public ModelAndView defaultView() throws Exception{
         logger.info("INSIDE DEFAULT VIEW OF PRODUCT LIST");
-        List<Product> list=homeService.getProductList();
+        List<Product> list;
+        list = homeService.getProductList();
         ModelAndView modelAndView=new ModelAndView("product_list");
         modelAndView.addObject("productList",list);
         return modelAndView;
@@ -150,7 +143,7 @@ public class ShopHomeController {
     /*Method -addedToCart
     * This method is used for handling the addition of products in cart*/
     @RequestMapping(value = "added_cart",method = RequestMethod.GET)
-    public ModelAndView addedToCart(HttpSession session, ModelMap map) throws SQLException,NullPointerException{
+    public ModelAndView addedToCart(HttpSession session, ModelMap map) throws Exception{
         logger.info("INSIDE CART");
         //Getting session attributes
         String[] productIDs = (String[]) session.getAttribute("shopping_cart_productId");
@@ -158,32 +151,26 @@ public class ShopHomeController {
         //If cart is empty
         if (session.getAttribute("shopping_cart_productId")==null || productIDs.length==0){
             logger.error("CART IS EMPTY (FOR FIRST CLICK AFTER LOGIN)");
-            ModelAndView modelAndView=new ModelAndView("cart_error");
-            return modelAndView;
+            return new ModelAndView("cart_error");
         }else {
             logger.info("CART IS NOT EMPTY");
             List<ProductOrder> productList;
             List<List<ProductOrder>> cart=new ArrayList<>();
             //Getting the confirmed products
             for (int i = 0; i < productIDs.length; i++) {
-                try {
-                    productList = cartService.getCart(productIDs[i], quantity[i]);
-                }catch (Exception e){
-                    throw e;
-                }
+                productList = cartService.getCart(productIDs[i], quantity[i]);
                 cart.add(productList);  //Adding it to the list
             }
             logger.info("GOT CART ITEMS IN LIST");
             map.addAttribute("cart_list", cart);
             //map.addAttribute("quantity", quantity);
-            ModelAndView modelAndView=new ModelAndView("cart", map);
-            return modelAndView;
+            return new ModelAndView("cart", map);
         }
     }
     /*Method - placeOrder
     * This method handles the request to checkout page */
     @RequestMapping(value = "checkoutPage",method = RequestMethod.POST)
-    public ModelAndView placeOrder(HttpSession session,ModelMap modelMap){
+    public ModelAndView placeOrder(HttpSession session,ModelMap modelMap) throws Exception{
         logger.info("INSIDE PLACE ORDER");
         //Getting session attributes
         String userName=(String) session.getAttribute("userName");
@@ -194,26 +181,25 @@ public class ShopHomeController {
         logger.info("CONFIRMING THE ORDER");
         //Confirming the order which adds the details to the database
         for (int i=0;i<productIDs.length;i++){
-            confirm[i]=checkoutService.confirmOrder(productIDs[i],quantity[i],userName,insertCount);
+            confirm[i] = checkoutService.confirmOrder(productIDs[i], quantity[i], userName, insertCount);
             insertCount++;
         }
         List<ProductOrder> orderList;
         //Checks if all products successfully added or not
-        boolean confirmFlag=checkoutService.checkConfirmation(confirm);
+        boolean confirmFlag;
+        confirmFlag = checkoutService.checkConfirmation(confirm);
+        int totalPrice;
         //If it is true then it will get the details of that order & will also calculate total price
         if (confirmFlag){
             logger.info("ALL PRODUCTS ARE CONFIRMED");
             orderList=checkoutService.getOrderDetails(userName);
-            int totalPrice=checkoutService.totalAmount(orderList);
-
+            totalPrice=checkoutService.totalAmount(orderList);
             modelMap.addAttribute("order",orderList);
             modelMap.addAttribute("totalPrice",totalPrice);
-            ModelAndView modelAndView=new ModelAndView("checkout",modelMap);
-            return modelAndView;
+            return new ModelAndView("checkout",modelMap);
         }else {
             logger.error("PRODUCTS ARE NOT CONFIRMED");
-            ModelAndView modelAndView=new ModelAndView("confirm_error");
-            return modelAndView;
+            return new ModelAndView("confirm_error");
         }
     }
     /*Method - removeItems

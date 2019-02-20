@@ -31,7 +31,7 @@ public class CartServiceImpl implements CartService {
     * Parameters - ProductId & Quantity
     * Functionality - Gives call to getCart method of CartDAO with same parameters & gets a list of ProductOrder*/
     @Override
-    public List<ProductOrder> getCart(String productId, String quantity) throws NullPointerException,SQLException{
+    public List<ProductOrder> getCart(String productId, String quantity) throws Exception{
         logger.info("INSIDE CART SERVICE : getCart");
         return cartDAO.getCart(productId,quantity);
     }
@@ -65,7 +65,7 @@ public class CartServiceImpl implements CartService {
     * Parameters - Array of cart(product,quantity), new length for array, item to be added
     * Functionality - Adding items to the cart*/
     @Override
-    public String[] addItem(String[] cart,int newLength,String item) {
+    public String[] addItem(String[] cart,int newLength,String item) throws NullPointerException{
         logger.info("INSIDE CART SERVICE : addItem");
         logger.info("ADDING ITEM");
         if (newLength==0){

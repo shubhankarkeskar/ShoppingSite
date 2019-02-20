@@ -6,6 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface HomeService {
-    List<Product> getProductList() throws SQLException,NullPointerException;
-    List<Product> getSelectedProducts(String productId) throws SQLException,NullPointerException;
+    List<Product> getProductList() throws Exception;
+    List<Product> getSelectedProducts(String productId) throws Exception;
 }
