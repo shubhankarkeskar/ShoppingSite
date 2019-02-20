@@ -1,4 +1,4 @@
-# ShoppingSiteAssignment
+# ShoppingSite
 
 Requirements
 IDE - Intellij
@@ -7,7 +7,7 @@ MySQL version - 5.7.24
 Spring framework - 4.3.18 or more
 javax.servlet - 3.0.1 or more
 mysql-connector - 8.0.14
-jstl - 1.2
+jstl lib - 1.2
 Spring security - 5.0.6
 HikariCP - 2.7.8
 
